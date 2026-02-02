@@ -59,8 +59,11 @@ local function openTicketMenu()
     local playerLabel = vguiLib.CreateLabel(content, util.Lang("select_player"), "oasis_tickets_small")
     playerLabel:Dock(TOP)
 
-    local players = buildPlayerList()
-    local playerDropdown = vguiLib.CreateDropdown(content, players, nil)
+    local playerItems = {}
+    for _, ply in ipairs(buildPlayerList()) do
+        table.insert(playerItems, { label = ply:Nick(), value = ply })
+    end
+    local playerDropdown = vguiLib.CreateDropdown(content, playerItems, nil)
     playerDropdown:Dock(TOP)
     playerDropdown:DockMargin(0, 6, 0, 12)
 
@@ -131,6 +134,9 @@ local function openTicketMenu()
     end)
     submit:Dock(TOP)
     submit:DockMargin(0, 8, 0, 0)
+
+    content:InvalidateLayout(true)
+    content:SizeToChildren(false, true)
 end
 
 hook.Add("PlayerButtonDown", "oasis_tickets_open_menu", function(_, button)

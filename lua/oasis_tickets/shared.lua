@@ -27,6 +27,23 @@ function util.IsValidPlayer(ply)
     return IsValid(ply) and ply:IsPlayer()
 end
 
+function util.HasAdminAccess(ply)
+    if not util.IsValidPlayer(ply) then
+        return false
+    end
+
+    local config = addon.Config
+    if config and config.IsAdminGroup(ply:GetUserGroup()) then
+        return true
+    end
+
+    if ULib and ULib.ucl and ULib.ucl.query then
+        return ULib.ucl.query(ply, "oasis_tickets.admin")
+    end
+
+    return false
+end
+
 function util.SafeSteamID64(ply)
     if not util.IsValidPlayer(ply) then
         return ""

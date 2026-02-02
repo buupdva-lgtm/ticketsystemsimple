@@ -7,11 +7,7 @@ local ulxHelper = addon.ULX
 util.AddNetworkString("oasis_tickets_ulx_action")
 
 local function isAdmin(ply)
-    if not addonUtil.IsValidPlayer(ply) then
-        return false
-    end
-
-    return config.IsAdminGroup(ply:GetUserGroup())
+    return addonUtil.HasAdminAccess(ply)
 end
 
 net.Receive("oasis_tickets_ulx_action", function(_, ply)

@@ -135,8 +135,9 @@ function vguiLib.CreateScrollPanel(parent)
 end
 
 function vguiLib.CreateDropdown(parent, items, onSelect)
-    local container = vgui.Create("DPanel", parent)
+    local container = vgui.Create("DButton", parent)
     container:SetTall(36)
+    container:SetText("")
     container.Selected = nil
     container.Items = items or {}
     container.Expanded = false
@@ -148,6 +149,7 @@ function vguiLib.CreateDropdown(parent, items, onSelect)
     label:SetContentAlignment(4)
     label:DockMargin(12, 0, 0, 0)
     label:SetText("-")
+    label:SetMouseInputEnabled(false)
 
     local arrow = vgui.Create("DLabel", container)
     arrow:Dock(RIGHT)
@@ -156,11 +158,12 @@ function vguiLib.CreateDropdown(parent, items, onSelect)
     arrow:SetTextColor(util.ColorFromTable(colors.Muted))
     arrow:SetContentAlignment(5)
     arrow:SetText("▾")
+    arrow:SetMouseInputEnabled(false)
 
-    local listPanel = vgui.Create("DPanel", container)
+    local listPanel = vgui.Create("DPanel", parent)
     listPanel:SetVisible(false)
-    listPanel:SetPos(0, 36)
     listPanel:SetSize(container:GetWide(), 150)
+    listPanel:SetZPos(1000)
 
     function listPanel:Paint(w, h)
         surface.SetDrawColor(util.ColorFromTable(colors.Panel))
@@ -170,16 +173,34 @@ function vguiLib.CreateDropdown(parent, items, onSelect)
     local scroll = vguiLib.CreateScrollPanel(listPanel)
     scroll:Dock(FILL)
 
+    local function formatLabel(value)
+        if istable(value) and value.label then
+            return tostring(value.label)
+        end
+        if IsEntity(value) and value:IsPlayer() then
+            return value:Nick()
+        end
+        return tostring(value)
+    end
+
+    local function getValue(value)
+        if istable(value) and value.value ~= nil then
+            return value.value
+        end
+        return value
+    end
+
     local function refresh()
         scroll:Clear()
         for _, value in ipairs(container.Items) do
-            local entry = vguiLib.CreateButton(scroll, tostring(value), function()
-                container.Selected = value
-                label:SetText(tostring(value))
+            local display = formatLabel(value)
+            local entry = vguiLib.CreateButton(scroll, display, function()
+                container.Selected = getValue(value)
+                label:SetText(display)
                 container.Expanded = false
                 listPanel:SetVisible(false)
                 if container.OnSelect then
-                    container.OnSelect(value)
+                    container.OnSelect(container.Selected)
                 end
             end)
             entry:Dock(TOP)
@@ -198,7 +219,7 @@ function vguiLib.CreateDropdown(parent, items, onSelect)
 
     function container:SetSelected(value)
         self.Selected = value
-        label:SetText(tostring(value))
+        label:SetText(formatLabel(value))
     end
 
     function container:Paint(w, h)
@@ -206,14 +227,25 @@ function vguiLib.CreateDropdown(parent, items, onSelect)
         surface.DrawRect(0, 0, w, h)
     end
 
-    function container:OnMousePressed()
+    function container:DoClick()
         self.Expanded = not self.Expanded
         listPanel:SetVisible(self.Expanded)
     end
 
-    function container:PerformLayout(w, h)
-        listPanel:SetPos(0, h)
-        listPanel:SetSize(w, 150)
+    function container:Think()
+        if not IsValid(listPanel) then
+            return
+        end
+
+        local x, y = container:LocalToScreen(0, 0)
+        listPanel:SetPos(x, y + container:GetTall())
+        listPanel:SetWide(container:GetWide())
+    end
+
+    function container:OnRemove()
+        if IsValid(listPanel) then
+            listPanel:Remove()
+        end
     end
 
     refresh()

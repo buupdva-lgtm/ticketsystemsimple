@@ -4,6 +4,27 @@ addon.ULX = addon.ULX or {}
 
 local ulxHelper = addon.ULX
 
+local function registerPermissions()
+    if not ULib or not ULib.ucl or not ULib.ucl.registerAccess then
+        return
+    end
+
+    if ulxHelper.PermissionsRegistered then
+        return
+    end
+
+    ULib.ucl.registerAccess("oasis_tickets.admin", "admin", "Access to OasisRPG tickets admin tools.", "OasisRPG Tickets")
+    ulxHelper.PermissionsRegistered = true
+end
+
+hook.Add("ULibLoaded", "oasis_tickets_register_permissions", function()
+    registerPermissions()
+end)
+
+if ULib and ULib.ucl then
+    registerPermissions()
+end
+
 function ulxHelper.IsAvailable()
     return ulx and ulx.goto and ulx.bring and ulx.jailtp and ulx.return and ULib and ULib.ucl
 end

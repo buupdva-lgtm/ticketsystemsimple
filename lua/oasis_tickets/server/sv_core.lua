@@ -19,11 +19,7 @@ local function initPrint(message, color)
 end
 
 local function isAdmin(ply)
-    if not addonUtil.IsValidPlayer(ply) then
-        return false
-    end
-
-    return config.IsAdminGroup(ply:GetUserGroup())
+    return addonUtil.HasAdminAccess(ply)
 end
 
 local function buildTicket(payload)
@@ -232,8 +228,12 @@ hook.Add("Initialize", "oasis_tickets_init_logs", function()
     if addon.ULX and addon.ULX.IsAvailable() then
         initPrint("ULX detected")
     else
-        initPrint("ULX not detected", Color(236, 90, 90))
+        initPrint("ULX not detected (waiting for ULib/ULX)", Color(236, 90, 90))
     end
     initPrint("Language loaded (" .. (config.Language or "en") .. ")")
     initPrint("Ready")
+end)
+
+hook.Add("ULibLoaded", "oasis_tickets_ulx_loaded_log", function()
+    initPrint("ULX detected")
 end)

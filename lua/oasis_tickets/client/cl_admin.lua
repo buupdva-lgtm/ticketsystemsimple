@@ -70,11 +70,11 @@ local function openAdminMenu(skipRequest)
     categoryDropdown:DockMargin(8, 0, 0, 0)
     categoryDropdown:SetSelected("All")
 
-    local priorityIds = {}
+    local priorityLabels = {}
     for _, priority in ipairs(config.TicketPriorities) do
-        table.insert(priorityIds, priority.id)
+        table.insert(priorityLabels, { label = priority.name, value = priority.id })
     end
-    local priorityOptions = buildFilterOptions(priorityIds)
+    local priorityOptions = buildFilterOptions(priorityLabels)
     local priorityDropdown = vguiLib.CreateDropdown(filterRow, priorityOptions, nil)
     priorityDropdown:Dock(LEFT)
     priorityDropdown:SetWide(150)
