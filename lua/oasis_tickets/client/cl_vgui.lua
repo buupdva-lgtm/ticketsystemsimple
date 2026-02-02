@@ -164,6 +164,9 @@ function vguiLib.CreateDropdown(parent, items, onSelect)
     listPanel:SetVisible(false)
     listPanel:SetSize(container:GetWide(), 150)
     listPanel:SetZPos(1000)
+    listPanel:SetDrawOnTop(true)
+    listPanel:SetMouseInputEnabled(true)
+    listPanel:SetKeyboardInputEnabled(false)
 
     function listPanel:Paint(w, h)
         surface.SetDrawColor(util.ColorFromTable(colors.Panel))
@@ -230,6 +233,9 @@ function vguiLib.CreateDropdown(parent, items, onSelect)
     function container:DoClick()
         self.Expanded = not self.Expanded
         listPanel:SetVisible(self.Expanded)
+        if self.Expanded then
+            listPanel:MoveToFront()
+        end
     end
 
     function container:Think()
@@ -241,7 +247,8 @@ function vguiLib.CreateDropdown(parent, items, onSelect)
         listPanel:SetPos(x, y + container:GetTall())
         listPanel:SetWide(container:GetWide())
         if self.Expanded and input.IsMouseDown(MOUSE_LEFT) then
-            if not self:IsHovered() and not listPanel:IsHovered() then
+            local listHovered = listPanel:IsHovered() or listPanel:IsChildHovered()
+            if not self:IsHovered() and not listHovered then
                 self.Expanded = false
                 listPanel:SetVisible(false)
             end
