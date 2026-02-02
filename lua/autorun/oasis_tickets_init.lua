@@ -6,25 +6,38 @@ oasis_tickets.Name = addOnName
 oasis_tickets.Author = "Pacey"
 oasis_tickets.Prefix = "oasis_tickets"
 
-local function includeFile(path)
+local function includeShared(path)
     if SERVER then
         AddCSLuaFile(path)
     end
     include(path)
 end
 
-includeFile("oasis_tickets/shared.lua")
-includeFile("oasis_tickets/config.lua")
-includeFile("oasis_tickets/language.lua")
-
-if SERVER then
-    includeFile("oasis_tickets/server/sv_storage.lua")
-    includeFile("oasis_tickets/server/sv_ulx.lua")
-    includeFile("oasis_tickets/server/sv_core.lua")
-    includeFile("oasis_tickets/server/sv_admin.lua")
-else
-    includeFile("oasis_tickets/client/cl_vgui.lua")
-    includeFile("oasis_tickets/client/cl_menu.lua")
-    includeFile("oasis_tickets/client/cl_admin.lua")
-    includeFile("oasis_tickets/client/cl_popup.lua")
+local function includeServer(path)
+    if SERVER then
+        include(path)
+    end
 end
+
+local function includeClient(path)
+    if SERVER then
+        AddCSLuaFile(path)
+        return
+    end
+
+    include(path)
+end
+
+includeShared("oasis_tickets/shared.lua")
+includeShared("oasis_tickets/config.lua")
+includeShared("oasis_tickets/language.lua")
+
+includeServer("oasis_tickets/server/sv_storage.lua")
+includeServer("oasis_tickets/server/sv_ulx.lua")
+includeServer("oasis_tickets/server/sv_core.lua")
+includeServer("oasis_tickets/server/sv_admin.lua")
+
+includeClient("oasis_tickets/client/cl_vgui.lua")
+includeClient("oasis_tickets/client/cl_menu.lua")
+includeClient("oasis_tickets/client/cl_admin.lua")
+includeClient("oasis_tickets/client/cl_popup.lua")
