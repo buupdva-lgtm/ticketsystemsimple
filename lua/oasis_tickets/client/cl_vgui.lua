@@ -234,6 +234,7 @@ function vguiLib.CreateDropdown(parent, items, onSelect)
         self.Expanded = not self.Expanded
         listPanel:SetVisible(self.Expanded)
         if self.Expanded then
+            listPanel:MakePopup()
             listPanel:MoveToFront()
         end
     end

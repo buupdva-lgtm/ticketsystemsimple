@@ -95,6 +95,10 @@ local function openTicketMenu()
     descEntry:SetTall(140)
     descEntry:Dock(TOP)
     descEntry:DockMargin(0, 6, 0, 0)
+    function descEntry:OnMousePressed(code)
+        self:RequestFocus()
+        DTextEntry.OnMousePressed(self, code)
+    end
 
     local hintLabel = vguiLib.CreateLabel(content, util.Lang("description_required"), "oasis_tickets_small")
     hintLabel:SetTextColor(util.ColorFromTable(config.Colors.Danger))
