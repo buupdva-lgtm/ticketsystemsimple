@@ -41,12 +41,34 @@ function vguiLib.CreateFrame(title, width, height)
 
     applyFade(frame)
 
+    local closeBtn = vgui.Create("DPanel", frame)
+    closeBtn:SetSize(32, 24)
+    closeBtn:SetPos(width - 44, 12)
+    closeBtn.Hover = 0
+
+    function closeBtn:Paint(w, h)
+        self.Hover = Lerp(FrameTime() * 10, self.Hover, self:IsHovered() and 1 or 0)
+        surface.SetDrawColor(236, 90, 90, 140 + (80 * self.Hover))
+        surface.DrawRect(0, 0, w, h)
+        draw.SimpleText("✕", "oasis_tickets_text", w / 2, h / 2, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+    end
+
+    function closeBtn:OnMousePressed()
+        if IsValid(frame) then
+            frame:Remove()
+        end
+    end
+
     function frame:Paint(w, h)
         surface.SetDrawColor(util.ColorFromTable(colors.Background))
         surface.DrawRect(0, 0, w, h)
         surface.SetDrawColor(util.ColorFromTable(colors.Accent))
         surface.DrawRect(0, 0, w, 2)
         draw.SimpleText(title, "oasis_tickets_title", 20, 12, util.ColorFromTable(colors.Text))
+    end
+
+    function frame:PerformLayout(w, h)
+        closeBtn:SetPos(w - 44, 12)
     end
 
     return frame

@@ -5,7 +5,7 @@ addon.ULX = addon.ULX or {}
 local ulxHelper = addon.ULX
 
 function ulxHelper.IsAvailable()
-    return ulx and ulx.goto and ulx.bring and ulx.jailtp and ulx.returnTo and ULib and ULib.ucl
+    return ulx and ulx.goto and ulx.bring and ulx.jailtp and ulx.return and ULib and ULib.ucl
 end
 
 function ulxHelper.HasPermission(ply, action)
@@ -53,7 +53,7 @@ function ulxHelper.Execute(action, caller, target)
 
     if action == "ulx return" then
         return safeCall(function()
-            ulx.returnTo(caller, { target })
+            ulx.return(caller, { target })
         end)
     end
 

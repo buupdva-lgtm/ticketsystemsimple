@@ -37,32 +37,41 @@ end
 local function openTicketMenu()
     if IsValid(addon.PlayerMenu) then
         addon.PlayerMenu:Remove()
+        return
     end
 
-    local frame = vguiLib.CreateFrame(util.Lang("title_player_menu"), 520, 520)
+    local width = math.min(math.floor(ScrW() * 0.6), 720)
+    local height = math.min(math.floor(ScrH() * 0.7), 640)
+    local frame = vguiLib.CreateFrame(util.Lang("title_player_menu"), width, height)
     addon.PlayerMenu = frame
 
-    local body = vgui.Create("DPanel", frame)
+    local body = vguiLib.CreateScrollPanel(frame)
     body:Dock(FILL)
     body:DockMargin(20, 50, 20, 20)
     function body:Paint() end
 
-    local playerLabel = vguiLib.CreateLabel(body, util.Lang("select_player"), "oasis_tickets_small")
+    local content = vgui.Create("DPanel", body)
+    content:Dock(TOP)
+    content:DockMargin(0, 0, 0, 0)
+    content:SetTall(height)
+    function content:Paint() end
+
+    local playerLabel = vguiLib.CreateLabel(content, util.Lang("select_player"), "oasis_tickets_small")
     playerLabel:Dock(TOP)
 
     local players = buildPlayerList()
-    local playerDropdown = vguiLib.CreateDropdown(body, players, nil)
+    local playerDropdown = vguiLib.CreateDropdown(content, players, nil)
     playerDropdown:Dock(TOP)
     playerDropdown:DockMargin(0, 6, 0, 12)
 
-    local categoryLabel = vguiLib.CreateLabel(body, util.Lang("select_category"), "oasis_tickets_small")
+    local categoryLabel = vguiLib.CreateLabel(content, util.Lang("select_category"), "oasis_tickets_small")
     categoryLabel:Dock(TOP)
 
-    local categoryDropdown = vguiLib.CreateDropdown(body, config.TicketCategories, nil)
+    local categoryDropdown = vguiLib.CreateDropdown(content, config.TicketCategories, nil)
     categoryDropdown:Dock(TOP)
     categoryDropdown:DockMargin(0, 6, 0, 12)
 
-    local priorityLabel = vguiLib.CreateLabel(body, util.Lang("select_priority"), "oasis_tickets_small")
+    local priorityLabel = vguiLib.CreateLabel(content, util.Lang("select_priority"), "oasis_tickets_small")
     priorityLabel:Dock(TOP)
 
     local priorityNames = {}
@@ -72,24 +81,24 @@ local function openTicketMenu()
         priorityMap[priority.name] = priority.id
     end
 
-    local priorityDropdown = vguiLib.CreateDropdown(body, priorityNames, nil)
+    local priorityDropdown = vguiLib.CreateDropdown(content, priorityNames, nil)
     priorityDropdown:Dock(TOP)
     priorityDropdown:DockMargin(0, 6, 0, 12)
 
-    local descLabel = vguiLib.CreateLabel(body, util.Lang("description_label"), "oasis_tickets_small")
+    local descLabel = vguiLib.CreateLabel(content, util.Lang("description_label"), "oasis_tickets_small")
     descLabel:Dock(TOP)
 
-    local descEntry = vguiLib.CreateTextEntry(body, true)
+    local descEntry = vguiLib.CreateTextEntry(content, true)
     descEntry:SetTall(140)
     descEntry:Dock(TOP)
     descEntry:DockMargin(0, 6, 0, 0)
 
-    local hintLabel = vguiLib.CreateLabel(body, util.Lang("description_required"), "oasis_tickets_small")
+    local hintLabel = vguiLib.CreateLabel(content, util.Lang("description_required"), "oasis_tickets_small")
     hintLabel:SetTextColor(util.ColorFromTable(config.Colors.Danger))
     hintLabel:Dock(TOP)
     hintLabel:DockMargin(0, 6, 0, 12)
 
-    local submit = vguiLib.CreateButton(body, util.Lang("submit_ticket"), function()
+    local submit = vguiLib.CreateButton(content, util.Lang("submit_ticket"), function()
         local target = playerDropdown.Selected
         local category = categoryDropdown.Selected
         local priority = priorityMap[priorityDropdown.Selected or ""]

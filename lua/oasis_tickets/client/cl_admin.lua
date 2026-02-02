@@ -39,9 +39,12 @@ end
 local function openAdminMenu(skipRequest)
     if IsValid(addon.AdminMenu) then
         addon.AdminMenu:Remove()
+        return
     end
 
-    local frame = vguiLib.CreateFrame(util.Lang("title_admin_menu"), 720, 560)
+    local width = math.min(math.floor(ScrW() * 0.7), 860)
+    local height = math.min(math.floor(ScrH() * 0.75), 680)
+    local frame = vguiLib.CreateFrame(util.Lang("title_admin_menu"), width, height)
     addon.AdminMenu = frame
 
     local layout = vgui.Create("DPanel", frame)
